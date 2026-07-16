@@ -9,7 +9,7 @@ import {
 export const getShortenerData = async (req, res) => {
   try {
     const links = await getAllShortLinks();
-    console.log("all links", links);
+    // console.log("all links", links);
 
     res.render("index", {
       links,
@@ -57,13 +57,12 @@ export const redirectingToLinkUrl = async (req, res) => {
     const { shortCode } = req.params;
 
     const link = await checkingShortLink(shortCode);
-    console.log("specify", link);
 
-    if (!link.url) {
-      return res.redirect("/404");
+    if (!link) {
+      return res.status(404).send("Short URL not found");
     }
 
-    res.redirect(link.url);
+    return res.redirect(link.url);
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
