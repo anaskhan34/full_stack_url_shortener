@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>URL Shortener</title>
+
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+
+<body>
+
+<div class="container">
+
+
+  <h1>⚡ URL Shortener</h1>
+
+
+  <!-- Error Alert -->
+  <% if (error) { %>
+    <script>
+      alert("<%= error %>");
+    </script>
+  <% } %>
+
+
+
+  <!-- URL Shortener Form -->
+  <form action="/" method="POST" class="form-card">
+
+
+    <div class="input-group">
+
+      <label>
+        Enter URL
+      </label>
+
+
+      <input
+        type="url"
+        name="url"
+        placeholder="https://example.com"
+        required
+      />
+
+    </div>
+
+
+
+    <div class="input-group">
+
+      <label>
+        Custom Short Code (optional)
+      </label>
+
+
+      <input
+        type="text"
+        name="shortCode"
+        placeholder="abc123"
+      />
+
+    </div>
+
+
+
+    <button type="submit">
+      Shorten URL
+    </button>
+
+
+  </form>
+
+
+
+
+  <!-- Shortened URLs List -->
+
+  <h2>
+    📌 Shortened URLs
+  </h2>
+
+
+
+  <% if (links.length === 0) { %>
+
+
+    <p class="empty">
+      No URLs created yet.
+    </p>
+
+
+  <% } else { %>
+
+
+
+    <ul id="shortened-urls">
+
+
+      <% links.forEach(({ url, short_code }) => { %>
+
+
+        <li class="url-card">
+
+
+          <a 
+            href="/<%= short_code %>" 
+            target="_blank"
+          >
+
+            <%= protocol %>://<%= host %>/<%= short_code %>
+
+          </a>
+
+
+
+          <p class="original">
+
+            <%= url %>
+
+          </p>
+
+
+        </li>
+
+
+      <% }) %>
+
+
+    </ul>
+
+
+
+  <% } %>
+
+
+
+</div>
+
+
+</body>
+
+</html>
