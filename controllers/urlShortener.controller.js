@@ -11,11 +11,18 @@ export const getShortenerData = async (req, res) => {
     const links = await getAllShortLinks();
     // console.log("all links", links);
 
+    // let isSignIn = req.headers.cookie;
+    // isSignIn = isSignIn?.split("=")[1];
+    // console.log(isSignIn);
+    let isSignIn = req?.cookies?.isSignIn;
+    console.log(isSignIn);
+
     res.render("index", {
       links,
       host: req.get("host"),
       protocol: req.protocol,
       error: null,
+      isSignIn,
     });
   } catch (err) {
     console.log(err);

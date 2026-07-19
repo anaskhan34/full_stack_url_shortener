@@ -2,6 +2,7 @@ import path from "path";
 import express from "express";
 import { shortenUrl } from "./router/shortener.routes.js";
 import { authRoutes } from "./router/auth.routes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.set("view engine", "ejs");
 
 // router
 
+app.use(cookieParser());
 app.use(authRoutes);
 app.use(shortenUrl);
 // Start server
