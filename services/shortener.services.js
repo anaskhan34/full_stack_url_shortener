@@ -1,6 +1,9 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db } from "../config/db.js";
 import { shortLinks } from "../drizzle/schema.js";
+import { users } from "../drizzle/schema.js";
+import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 export const getAllShortLinks = async () => {
   return await db.select().from(shortLinks);
@@ -18,5 +21,42 @@ export const postShortLink = async ({ url, shortCode }) => {
   return await db.insert(shortLinks).values({
     url,
     short_code: shortCode,
+  });
+};
+
+export const checkExistEmail = async (email) => {
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+  return user;
+};
+
+export const creatingNewUser = async ({ name, email, password }) => {
+  return db.insert(users).values({
+    name,
+    email,
+    password,
+  });
+};
+// export const checkExistUser = async (email, password) => {
+//   const [user] = await db
+//     .select()
+//     .from(users)
+//     .where(and(eq(users.email, email), eq(users.password, password)));
+//   return user;
+// };
+
+// hashing password
+export const hashPassword = async (password) => {
+  return await argon2.hash(password);
+};
+
+// verifying password
+export const verifyPassword = async (hashPassword, password) => {
+  return await argon2.verify(hashPassword, password);
+};
+
+// generate jwt token
+export const generateToken = ({ id, name, email }) => {
+  return jwt.sign({ id, name, email }, process.env.SECRET_KEY, {
+    expiresIn: "30d",
   });
 };
