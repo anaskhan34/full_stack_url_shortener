@@ -5,8 +5,11 @@ import { users } from "../drizzle/schema.js";
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 
-export const getAllShortLinks = async () => {
-  return await db.select().from(shortLinks);
+export const getAllShortLinks = async (userId) => {
+  return await db
+    .select()
+    .from(shortLinks)
+    .where(eq(shortLinks.userId, userId));
 };
 
 export const checkingShortLink = async (shortCode) => {
@@ -17,10 +20,11 @@ export const checkingShortLink = async (shortCode) => {
 
   return link;
 };
-export const postShortLink = async ({ url, shortCode }) => {
+export const postShortLink = async ({ url, shortCode, userId }) => {
   return await db.insert(shortLinks).values({
     url,
     short_code: shortCode,
+    userId,
   });
 };
 
@@ -65,3 +69,14 @@ export const generateToken = ({ id, name, email }) => {
 export const verifyJwtToken = (token) => {
   return jwt.verify(token, process.env.SECRET_KEY);
 };
+
+//
+export const getParamIdData = async (id) => {
+  const [link] = await db
+    .select()
+    .from(shortLinks)
+    .where(eq(shortLinks.id, id));
+
+  return link;
+};
+getParamIdData;

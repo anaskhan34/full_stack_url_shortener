@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { Router } from "express";
 import path from "path";
 import {
+  getEditPage,
   getShortenerData,
   postShortenerData,
   redirectingToLinkUrl,
@@ -22,5 +23,7 @@ router.get("/404", (req, res) => {
 
 // Redirect short URL
 router.get("/:shortCode", redirectingToLinkUrl);
+
+router.route("/edit/:id").get(getEditPage);
 
 export const shortenUrl = router;

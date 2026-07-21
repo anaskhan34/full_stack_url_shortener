@@ -1,14 +1,15 @@
 <%- include("partials/header", { title: "Home" }) %>
 
-<% if (user) { %>
-  <h2>You are logged in</h2>
-<% } else { %>
-  <h2>You are logged out</h2>
-<% } %>
+
 
 <main class="page-shell home-page">
   <div class="container">
     <section class="hero-card">
+      <% if (user) { %>
+  <li style="font-size: 20px; color: rgb(15, 208, 15); font-weight: 700;">You are logged in</li>
+<% } else { %>
+  <li style="font-size: 20px; color: rgb(223, 12, 12); font-weight: 700;">You are logged out</li>
+<% } %>
       <h1>⚡ URL Shortener</h1>
       <p class="subtitle">Create clean short links in seconds.</p>
 
@@ -39,6 +40,16 @@
             placeholder="abc123"
           />
         </div>
+
+                  <% if (errors && errors.length > 0) { %>
+  <div class="error-box">
+    <ul>
+      <% errors.forEach(error => { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
 
         <button type="submit" class="btn-primary">Shorten URL</button>
       </form>

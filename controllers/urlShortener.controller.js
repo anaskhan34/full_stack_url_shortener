@@ -5,17 +5,13 @@ import {
   getAllShortLinks,
   postShortLink,
 } from "../services/shortener.services.js";
+import z from "zod";
 
 export const getShortenerData = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
   try {
-    const links = await getAllShortLinks();
-    // console.log("all links", links);
-
-    // let isSignIn = req.headers.cookie;
-    // isSignIn = isSignIn?.split("=")[1];
-    // console.log(isSignIn);
+    const links = await getAllShortLinks(req.user.id);
     let access_token = req?.cookies?.access_token;
-    // console.log(isSignIn);
 
     res.render("index", {
       links,
@@ -23,6 +19,7 @@ export const getShortenerData = async (req, res) => {
       protocol: req.protocol,
       error: null,
       access_token,
+      errors: req.flash("errors"),
     });
   } catch (err) {
     console.log(err);
@@ -31,6 +28,7 @@ export const getShortenerData = async (req, res) => {
 };
 
 export const postShortenerData = async (req, res) => {
+  if (!req.user) return res.redirect("/login");
   try {
     const { url, shortCode } = req.body;
 
@@ -44,12 +42,14 @@ export const postShortenerData = async (req, res) => {
     const existing = await checkingShortLink(finalShortCode);
 
     if (existing) {
-      return res.status(400).send("Short Code Already Exists");
+      req.flash("errors", "Short Code Already Exists");
+      return res.redirect("/");
     }
 
     await postShortLink({
       url,
       shortCode: finalShortCode,
+      userId: req.user.id,
     });
 
     res.redirect("/");
@@ -61,6 +61,7 @@ export const postShortenerData = async (req, res) => {
 
 export const redirectingToLinkUrl = async (req, res) => {
   try {
+    // if (!req.user) res.redirect("/login");
     const { shortCode } = req.params;
 
     const link = await checkingShortLink(shortCode);
@@ -73,5 +74,31 @@ export const redirectingToLinkUrl = async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(500).send("Internal Server Error");
+  }
+};
+
+export const getEditPage = async (req, res) => {
+  try {
+    if (!req.params) {
+      return res.redirect("/");
+    }
+    const { data: id } = z.coerce.number().int().safeParse(req.params);
+
+    const link = await getParamIdData(id);
+
+    if (!link) {
+      return res.redirect("/");
+    }
+
+    res.render("edit-page", {
+      links: link,
+      host: req.get("host"),
+      protocol: req.protocol,
+      error: null,
+      access_token,
+      errors: req.flash("errors"),
+    });
+  } catch (error) {
+    console.log("error:", error);
   }
 };
