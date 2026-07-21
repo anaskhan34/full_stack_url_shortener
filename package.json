@@ -16,10 +16,12 @@
   "type": "module",
   "dependencies": {
     "argon2": "^0.45.0",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.7",
     "drizzle-orm": "^1.0.0-rc.4",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.23.0",
     "zod": "^4.4.3"

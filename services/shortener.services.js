@@ -60,3 +60,8 @@ export const generateToken = ({ id, name, email }) => {
     expiresIn: "30d",
   });
 };
+
+// verify token
+export const verifyJwtToken = (token) => {
+  return jwt.verify(token, process.env.SECRET_KEY);
+};

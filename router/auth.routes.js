@@ -13,4 +13,7 @@ router
   .get(authControllers.getLoginPage)
   .post(authControllers.loginPage);
 
+router.route("/me").get(authControllers.getMe);
+router.route("/logout").get(authControllers.getLogout);
+
 export const authRoutes = router;

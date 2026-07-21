@@ -29,6 +29,17 @@
           <input id="confirmPassword" type="password" name="confirmPassword" placeholder="••••••••" required />
         </div> -->
 
+
+     <% if (errors && errors.length > 0) { %>
+  <div class="error-box">
+    <ul>
+      <% errors.forEach(error => { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
         <button type="submit" class="btn-primary">Register</button>
       </form>
        <div class="login-footer">

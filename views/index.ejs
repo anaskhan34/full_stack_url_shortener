@@ -1,6 +1,6 @@
 <%- include("partials/header", { title: "Home" }) %>
 
-<% if (access_token) { %>
+<% if (user) { %>
   <h2>You are logged in</h2>
 <% } else { %>
   <h2>You are logged out</h2>
