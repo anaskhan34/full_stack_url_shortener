@@ -1,4 +1,4 @@
-<%- include("partials/header", { title: "Home" }) %>
+<%- include("partials/header", { title: "edit-page" }) %>
 
 
 
@@ -11,7 +11,7 @@
   <li style="font-size: 20px; color: rgb(223, 12, 12); font-weight: 700;">You are logged out</li>
 <% } %>
       <h1>⚡ URL Shortener</h1>
-      <p class="subtitle">Create clean short links in seconds.</p>
+      <p class="subtitle">update clean short links in seconds.</p>
 
       <% if (error) { %>
         <script>
@@ -19,13 +19,14 @@
         </script>
       <% } %>
 
-      <form action="/" method="POST" class="form-card">
+      <form action="/edit/<%= id %>" method="post" class="form-card">
         <div class="input-group">
           <label for="url">Enter URL</label>
           <input
             id="url"
             type="url"
             name="url"
+            value="<%= url %>"
             placeholder="https://example.com"
             required
           />
@@ -37,6 +38,7 @@
             id="shortCode"
             type="text"
             name="shortCode"
+            value="<%= shortCode %>"
             placeholder="abc123"
           />
         </div>
@@ -51,51 +53,10 @@
   </div>
 <% } %>
 
-        <button type="submit" class="btn-primary">Shorten URL</button>
+        <button type="submit" value="update" class="btn-primary">update</button>
       </form>
-
-      <hr>
-              
-        <!-- <button type="submit" class="btn-primary">delete</button> -->
-
     </section>
 
-    <section class="card-section">
-  <h2>📌 Shortened URLs</h2>
-
-  <% if (links.length === 0) { %>
-    <p class="empty">No URLs created yet.</p>
-  <% } else { %>
-    <ul id="shortened-urls" class="url-list">
-      <% links.forEach(({id, url, short_code }) => { %>
-        <li class="url-card">
-
-          <div class="url-info">
-            <a href="/<%= short_code %>" target="_blank" class="short-link">
-              <%= protocol %>://<%= host %>/<%= short_code %>
-            </a>
-
-            <p class="original-url"><%= url %></p>
-          </div>
-
-          <div class="url-actions">
-            <a href="/edit/<%= id %>" class="btn-edit">
-  Edit
-</a>
-<form action="/delete/<%= id %>">
-
-  <div class="url-actions">
-    <button style="padding: 15px 15px;" class="btn-edit">
-      delete
-    </button>
-  </form>
-          </div>
-
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
-</section>
   </div>
 </main>
 

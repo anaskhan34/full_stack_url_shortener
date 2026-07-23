@@ -4,6 +4,9 @@ import {
   checkingShortLink,
   getAllShortLinks,
   postShortLink,
+  getEditShortLink,
+  postEditShortLink,
+  getDeleteLink,
 } from "../services/shortener.services.js";
 import z from "zod";
 
@@ -78,27 +81,96 @@ export const redirectingToLinkUrl = async (req, res) => {
 };
 
 export const getEditPage = async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+
   try {
-    if (!req.params) {
+    const result = z.coerce.number().int().safeParse(req.params.id);
+
+    if (!result.success) {
       return res.redirect("/");
     }
-    const { data: id } = z.coerce.number().int().safeParse(req.params);
 
-    const link = await getParamIdData(id);
+    const id = result.data;
 
-    if (!link) {
+    const shortLinkData = await getEditShortLink(id);
+
+    if (!shortLinkData) {
       return res.redirect("/");
     }
+
+    const { url, short_code } = shortLinkData;
 
     res.render("edit-page", {
-      links: link,
-      host: req.get("host"),
-      protocol: req.protocol,
-      error: null,
-      access_token,
+      id,
+      url,
+      shortCode: short_code,
       errors: req.flash("errors"),
+      error: null,
     });
   } catch (error) {
-    console.log("error:", error);
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const postEditPage = async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+
+  const result = z.coerce.number().int().safeParse(req.params.id);
+
+  if (!result.success) {
+    return res.redirect("/");
+  }
+
+  const id = result.data;
+
+  try {
+    const { url, shortCode } = req.body;
+
+    // Check if shortcode already exists
+    const existing = await checkingShortLink(shortCode);
+
+    // Allow the current record to keep its own shortcode
+    if (existing && existing.id !== id) {
+      req.flash("errors", "Short Code Already Exists");
+      return res.redirect(`/edit/${id}`);
+    }
+
+    await postEditShortLink({
+      id,
+      url,
+      shortCode,
+    });
+
+    return res.redirect("/");
+  } catch (error) {
+    console.error(error);
+    req.flash("errors", "Something went wrong");
+    return res.redirect(`/edit/${id}`);
+  }
+};
+
+// delete deleteShortLink
+export const deleteShortLink = async (req, res) => {
+  if (!req.user) {
+    return res.redirect("/login");
+  }
+
+  const result = z.coerce.number().int().safeParse(req.params.id);
+
+  if (!result.success) {
+    return res.redirect("/");
+  }
+
+  const id = result.data;
+  try {
+    await getDeleteLink(id);
+    res.redirect("/");
+  } catch (error) {
+    console.error("error in deleting", error);
   }
 };

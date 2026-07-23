@@ -71,7 +71,7 @@ export const verifyJwtToken = (token) => {
 };
 
 //
-export const getParamIdData = async (id) => {
+export const getEditShortLink = async (id) => {
   const [link] = await db
     .select()
     .from(shortLinks)
@@ -79,4 +79,15 @@ export const getParamIdData = async (id) => {
 
   return link;
 };
-getParamIdData;
+
+export const postEditShortLink = async ({ id, url, shortCode }) => {
+  return await db
+    .update(shortLinks)
+    .set({ url, short_code: shortCode })
+    .where(eq(shortLinks.id, id));
+};
+
+// getDeleteLink
+export const getDeleteLink = async (id) => {
+  return await db.delete(shortLinks).where(eq(shortLinks.id, id));
+};
